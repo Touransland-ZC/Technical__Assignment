@@ -3,11 +3,15 @@ Implementing option 1: a command-line program for File Organizer
 It organizes files in a folder into Images, Documents, Videos, Audio, Archives, eBooks, and Others based on extension
 The categories include Images, Documents, Videos, Audio, Archives, eBooks, and Others based on extension, handling the no extension files and the multi-extension files.
 
-It shows a summary of the number of files under each category.
-It shows a pie chart based on your request.
+It shows a summary with counts per category.
+It shows an optional pie chart.
 It has a simulation-only mode.
 It shows each file name is moved to which category.
-Implemented a test coverage 99%.
+There is a safe destination name that prevents overwrites.
+Test coverage ≈ 99%.
+
+
+
 
 HOW TO RUN:
 You can find a Colab Notebook, named FileOrganizer.ipynb, which includes the project code & the test coverage, both with their outputs, and you can find comments explaining each function
@@ -22,6 +26,8 @@ Note: Google Colab can't modify folders on the pc directly; hence, you will uplo
 6) If you select to move the files, then after each move, you will know each file name will be at which category folder.
 
 
-
-
-
+Language and tools
+Python 3.11
+Matplotlib
+Pytest, pytest-cov
+Google Colab
