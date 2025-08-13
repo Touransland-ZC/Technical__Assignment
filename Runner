@@ -1,0 +1,120 @@
+from pathlib import Path
+import importlib
+import file_organizer as org
+
+
+
+
+# these are the allowed roots for safety and clearer error messages
+# Note: I am working on Colab, so I am using the Colab VM storage, not the actual pc storage
+# also, the user can choose to organize a folder from the drive
+ALLOWED_CONTENT = (Path("/content"),)
+ALLOWED_DRIVE   = (Path("/content/drive"),)
+
+
+
+
+# Simple menu loop to ask the user whether the folder is on the drive or was uploaded earlier on Colab VM storage
+# the user must enter a valid number that represents the choice
+def pick(prompt, choices):
+    while True:
+        print(prompt)
+        for k, v in choices.items():
+            print(f"  {k}) {v}")
+        ans = input("Enter a number: ").strip()
+        if ans in choices:
+            return ans
+        #print("Invalid choice.\n")
+        print("Invalid choice.\n", flush=True)
+
+
+
+
+# Yes/No prompt, Enter = default
+def my_yn_fun(prompt, default=True):
+    default_text = "Yes" if default else "No"
+    while True:
+        print("")  # # to avoid the piechart blocking problem
+        try:
+            ans = input(f"{prompt} [1=Yes, 2=No, Enter={default_text}] ").strip()
+        except EOFError:
+            return default
+        if ans == "":
+            return default
+        if ans in ("1", "y", "Y"):
+            return True
+        if ans in ("2", "n", "N"):
+            return False
+        print("Please enter 1 or 2.", flush=True)
+
+
+
+# Ask for a folder path until it’s valid.
+# there are some checks like being under one of the allowed roots, and must be a directory, it returns the default when empty
+def prompt_dir_until_valid(title, default=None, must_under=(), require_non_empty=True):
+    while True:
+        suffix = f" [{default}]" if default else ""
+        raw = input(f"{title}{suffix}: ").strip()
+        if raw == "" and default:
+            raw = default
+        p = Path(raw)
+
+        if must_under and not any(str(p).startswith(str(root)) for root in must_under):
+            roots = " or ".join(str(r) for r in must_under)
+            print(f"Path must start with {roots}\n")
+            continue
+        if not p.exists():
+            print("Path not found\n")
+            continue
+        if not p.is_dir():
+            print("Path is not a directory\n")
+            continue
+        if require_non_empty and not any(p.iterdir()):
+            print("Folder is empty\n")
+            continue
+        return p
+
+
+def run():
+    import importlib, sys
+    import matplotlib.pyplot as plt
+    importlib.reload(org)  
+
+    src = pick("Choose source", {"1": "Google Drive folder", "2": "Existing folder under /content "})
+
+    if src == "1":
+        from google.colab import drive
+        try:
+            drive.mount("/content/drive", force_remount=False)
+        except Exception:
+            pass
+        folder = prompt_dir_until_valid(
+            "Drive folder path",
+            must_under=ALLOWED_DRIVE,
+            require_non_empty=True,
+        )
+    else:
+        folder = prompt_dir_until_valid(
+            "Folder under /content (e.g., /content/inbox)",
+            default="/content/inbox",
+            must_under=ALLOWED_CONTENT,
+            require_non_empty=True,
+        )
+
+    simulate = my_yn_fun("Simulate only?", True)
+    show_pie = my_yn_fun("Show pie chart?", False) 
+
+    argv = [str(folder)]
+    if simulate:
+        argv.append("--simulate")
+    if show_pie:
+        argv.append("--plot-pie")
+
+    rc = org.main(argv)
+
+    plt.close('all')
+    sys.stdout.flush()
+    print("Done.")
+    return rc
+
+# /content/drive/MyDrive/Testing_drive_folder
