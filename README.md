@@ -13,7 +13,7 @@ Test coverage ≈ 99%.
 
 
 
-HOW TO RUN:
+**HOW TO RUN**
 You can find a Colab Notebook, named FileOrganizer.ipynb, which includes the project code & the test coverage, both with their outputs, and you can find comments explaining each function
 
 The function Run() is for running the file organizer.
@@ -26,7 +26,7 @@ Note: Google Colab can't modify folders on the pc directly; hence, you will uplo
 6) If you select to move the files, then after each move, you will know each file name will be at which category folder.
 
 
-Language and tools
+**Language and tools**
 Python 3.11
 Matplotlib
 Pytest, pytest-cov
