@@ -1,3 +1,4 @@
+%%writefile file_organizer.py
 
 import argparse
 from pathlib import Path
@@ -134,14 +135,15 @@ def print_summary(counts):
 
 
 
-# it shows the summary in a form of a pie chart, if there was no files in the folder then it will say No files to plot
+# it shows the summary in a form of a pie chart, if there are no files in the folder, then it will say No files to plot              
 def show_summary_pie(counts, title="Files per category"):
     labels = [c for c in CATEGORIES if counts.get(c, 0)]
     sizes  = [counts[c] for c in labels]
-
     if not sizes:
-        print("No files to plot")
+        print("No files to plot", flush=True)
         return
+    import matplotlib.pyplot as plt
+    plt.ioff()  # make show() non-blocking in Colab
     fig, ax = plt.subplots()
     ax.pie(sizes, labels=labels, autopct="%d", startangle=90)
     ax.axis("equal")
@@ -152,11 +154,8 @@ def show_summary_pie(counts, title="Files per category"):
 
 
 
-
-
-
 # the command line interface.
-# the user will have an aoption to simulation mode
+# the user will have an option to simulation mode
 def parse_args(argv=None):
     p = argparse.ArgumentParser(description="Organize files in a folder into Images, Documents, Videos, Audio, Archives, eBooks, Others based on extension.")
 
@@ -185,8 +184,6 @@ def main(argv=None) -> int:
 
     if getattr(args, "plot_pie", False):
         show_summary_pie(counts)
-
-
 
     return 0
 
