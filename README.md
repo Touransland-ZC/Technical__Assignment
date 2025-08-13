@@ -8,8 +8,8 @@ It shows a pie chart based on your request.
 It has a simulation-only mode.
 It shows each file name is moved to which category.
 Implemented a test coverage 99%.
--.-_.-._-.-_.-._.-._-.-_.-._-.-_.-._.-._.-.-_-.-_.-._-.-_.-._.-._-.-_.-._-.-_.-._.-._.-.-
->> HOW TO RUN:
+
+HOW TO RUN:
 You can find a Colab Notebook, named FileOrganizer.ipynb, which includes the project code & the test coverage, both with their outputs, and you can find comments explaining each function
 
 The function Run() is for running the file organizer.
@@ -19,7 +19,7 @@ Note: Google Colab can't modify folders on the pc directly; hence, you will uplo
 3) You will be asked if you want to simulate only or organize your folder.
 4) You will be asked if you want a pie chart representing the ratio between the categories.
 5) There will be a summary representing the number of files per category.
-6) If you select to actually move the files, then after each move, you will know each file name will be at which category folder.
+6) If you select to move the files, then after each move, you will know each file name will be at which category folder.
 
 
 
