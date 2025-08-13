@@ -1,14 +1,15 @@
 # Technical__Assignment
-Implementing option 1: a command-line program for File Organizer
-It organizes files in a folder into Images, Documents, Videos, Audio, Archives, eBooks, and Others based on extension
+Implementing option 1, which is a command-line program for File Organizer
+
+- It organizes files in a folder into Images, Documents, Videos, Audio, Archives, eBooks, and Others based on extension
 The categories include Images, Documents, Videos, Audio, Archives, eBooks, and Others based on extension, handling the no extension files and the multi-extension files.
 
-It shows a summary with counts per category.
-It shows an optional pie chart.
-It has a simulation-only mode.
-It shows each file name is moved to which category.
-There is a safe destination name that prevents overwrites.
-Test coverage ≈ 99%.
+- It shows a summary with counts per category.
+- It shows an optional pie chart.
+- It has a simulation-only mode.
+- It shows each file name is moved to which category.
+- There is a safe destination name that prevents overwrites.
+- Test coverage ≈ 99%.
 
 
 
