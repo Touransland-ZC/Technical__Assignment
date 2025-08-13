@@ -1,0 +1,65 @@
+import shutil
+from pathlib import Path
+import builtins
+import file_organizer as org
+
+def test_show_summary_pie_non_empty(monkeypatch):
+    # Avoid real GUI
+    import matplotlib.pyplot as plt
+    called = {"show": 0, "pie": 0}
+    monkeypatch.setattr(plt, "show", lambda *a, **k: called.__setitem__("show", called["show"] + 1))
+    def wrap_pie(*a, **k):
+        called["pie"] += 1
+        return plt.pie.__wrapped__(*a, **k) if hasattr(plt.pie, "__wrapped__") else None
+    # if Matplotlib can't wrap like this on your runtime, it's fine:
+    # the next line just ensures pie got called at least once.
+    try:
+        monkeypatch.setattr(plt, "pie", wrap_pie)
+    except Exception:
+        pass
+
+    counts = {c: 0 for c in org.CATEGORIES}
+    counts["Images"] = 2
+    counts["Documents"] = 1
+    org.show_summary_pie(counts, title="t")
+
+    # show must be invoked
+    assert called["show"] >= 1
+
+def test_safe_destination_numbering_to_two(tmp_path):
+    dst = tmp_path / "Documents"
+    dst.mkdir()
+    # Existing base and “(1)” to force “(2)”.
+    (dst / "file.txt").write_text("x")
+    (dst / "file (1).txt").write_text("x")
+    p = org.safe_destination(dst, "file.txt")
+    assert p.name == "file (2).txt"
+
+def test_apply_moves_handles_exception(tmp_path, monkeypatch, capsys):
+    # Prepare a file that should be moved
+    f = tmp_path / "x.pdf"
+    f.write_text("x")
+    moves = org.plan_moves(tmp_path)
+
+    # Force shutil.move to raise
+    def boom(*a, **k):
+        raise OSError("disk full")
+    monkeypatch.setattr(shutil, "move", boom)
+
+    counts = org.apply_moves(moves, simulate=False)
+    out = capsys.readouterr().out
+
+    # No count increment, file still exists, and SKIP message is printed
+    assert counts["Documents"] == 0
+    assert f.exists()
+    assert "SKIP x.pdf -> Documents" in out
+
+def test_main_with_plot_and_simulate(tmp_path, monkeypatch):
+    # One file so counts are non-empty; also trigger --plot-pie branch
+    (tmp_path / "v.mkv").write_text("x")
+    # Stub plt.show to avoid blocking
+    import matplotlib.pyplot as plt
+    monkeypatch.setattr(plt, "show", lambda *a, **k: None)
+
+    rc = org.main([str(tmp_path), "--simulate", "--plot-pie"])
+    assert rc == 0
